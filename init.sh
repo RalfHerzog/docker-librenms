@@ -170,8 +170,8 @@ then
     # Feature request as of 2017-09-02
     # See https://github.com/librenms/librenms/issues/5089
     # and https://community.librenms.org/t/feature-request-ldap-enhancements-bind-recursive-ssl/679
-    echo "\$config['auth_ad_binduser']                      = \"${LDAP_BIND_USER}\";" >> /data/config/config.php
-    echo "\$config['auth_ad_bindpassword']                  = \"${LDAP_BIND_PASSWORD}\";" >> /data/config/config.php
+    echo "\$config['auth_ldap_bind_user']                   = \"${LDAP_BIND_USER}\";" >> /data/config/config.php
+    echo "\$config['auth_ldap_bind_password']               = \"${LDAP_BIND_PASSWORD}\";" >> /data/config/config.php
   fi
 fi
 
