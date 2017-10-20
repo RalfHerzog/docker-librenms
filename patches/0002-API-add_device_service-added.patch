@@ -1,0 +1,86 @@
+From dd8aed93339d0515806f8a133df76ef6ddcb16fa Mon Sep 17 00:00:00 2001
+From: Ralf Herzog <ralf@rherzog.de>
+Date: Fri, 20 Oct 2017 16:19:25 +0200
+Subject: [PATCH] API: add_device_service added
+
+---
+ html/api_v0.php                     |  1 +
+ html/includes/api_functions.inc.php | 51 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 52 insertions(+)
+
+diff --git a/html/api_v0.php b/html/api_v0.php
+index 09489a592..a7e798a94 100644
+--- a/html/api_v0.php
++++ b/html/api_v0.php
+@@ -179,6 +179,7 @@ $app->group(
+                     '/services',
+                     function () use ($app) {
+                         $app->get('/:hostname', 'authToken', 'list_services')->name('get_service_for_host');
++                        $app->post('/:hostname', 'authToken', 'add_device_service')->name('add_device_service');
+                     }
+                 );
+                 $app->get('/services', 'authToken', 'list_services')->name('list_services');
+diff --git a/html/includes/api_functions.inc.php b/html/includes/api_functions.inc.php
+index 42bda11f2..532a9ab0e 100644
+--- a/html/includes/api_functions.inc.php
++++ b/html/includes/api_functions.inc.php
+@@ -1548,6 +1548,57 @@ function list_arp()
+     echo _json_encode($output);
+ }
+ 
++function add_device_service()
++{
++    // This will add a device using the data passed encoded with json
++    // FIXME: Execution flow through this function could be improved
++    global $config;
++    $app  = \Slim\Slim::getInstance();
++    $data = json_decode(file_get_contents('php://input'), true);
++
++    // Default status & code to error and change it if we need to.
++    $status = 'error';
++    $code   = 500;
++    // keep scrutinizer from complaining about snmpver not being set for all execution paths
++
++    $router   = $app->router()->getCurrentRoute()->getParams();
++
++    $message = '';
++    if (empty($data)) {
++        $message = 'No information has been provided to add this new device';
++    } elseif (!isset($router['hostname'])) {
++        $message = 'Missing the device hostname';
++    }
++
++    $hostname         = $router['hostname'];
++    $device_id        = ctype_digit($hostname) ? $hostname : getidbyname($hostname);
++
++    $service_ip       = $data['service_ip'];
++    $service_type     = $data['service_type'];
++    $service_desc     = $data['service_desc'];
++    $service_param    = $data['service_param'];
++    $service_ignore   = $data['service_ignore'] ? 1 : 0;
++
++    if (empty($message)) {
++        try {
++            $service_id = add_service($device_id, $service_type, $service_desc, $service_ip, $service_param, $service_ignore);
++            $code       = 201;
++            $status     = 'ok';
++            $message    = "Service to $hostname added successfully (service_id: $service_id)";
++        } catch (Exception $e) {
++            $message = $e->getMessage();
++        }
++    }
++
++    $app->response->setStatus($code);
++    $output = array(
++        'status'  => $status,
++        'message' => $message,
++    );
++    $app->response->headers->set('Content-Type', 'application/json');
++    echo _json_encode($output);
++}
++
+ function list_services()
+ {
+     global $config;
+-- 
+2.11.0
