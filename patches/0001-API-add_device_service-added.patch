@@ -1,7 +1,7 @@
 From dd8aed93339d0515806f8a133df76ef6ddcb16fa Mon Sep 17 00:00:00 2001
 From: Ralf Herzog <ralf@rherzog.de>
 Date: Fri, 20 Oct 2017 16:19:25 +0200
-Subject: [PATCH] API: add_device_service added
+Subject: [PATCH 1/2] API: add_device_service added
 
 ---
  html/api_v0.php                     |  1 +
@@ -84,3 +84,4 @@ index 42bda11f2..532a9ab0e 100644
      global $config;
 -- 
 2.11.0
+

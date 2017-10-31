@@ -1,31 +1,35 @@
-From c8a8fb58dac951295be25f42274624edc066dcf4 Mon Sep 17 00:00:00 2001
+From 71b1651b59cc596c9cd1e50a0fe0bc867a0de011 Mon Sep 17 00:00:00 2001
 From: Ralf Herzog <ralf@rherzog.de>
-Date: Tue, 31 Oct 2017 16:23:16 +0100
-Subject: [PATCH 2/2] API: Create json response
+Date: Tue, 31 Oct 2017 16:40:14 +0100
+Subject: [PATCH 2/2] API: Return json objects
 
 ---
- html/includes/api_functions.inc.php | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ html/includes/api_functions.inc.php | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/html/includes/api_functions.inc.php b/html/includes/api_functions.inc.php
-index 532a9ab0e..41a5e41ac 100644
+index 532a9ab0e..0a95eef88 100644
 --- a/html/includes/api_functions.inc.php
 +++ b/html/includes/api_functions.inc.php
-@@ -312,7 +312,7 @@ function add_device()
+@@ -311,8 +311,8 @@ function add_device()
+         try {
              $device_id = addHost($hostname, $snmpver, $port, $transport, $poller_group, $force_add);
              $code    = 201;
-             $status  = 'ok';
+-            $status  = 'ok';
 -            $message = "Device $hostname ($device_id) has been added successfully";
-+            $message = '{"id": "$device_id"}';
++            $status  = 'Created';
++            $message = "{\"id\": $device_id}";
          } catch (Exception $e) {
              $message = $e->getMessage();
          }
-@@ -1584,7 +1584,7 @@ function add_device_service()
+@@ -1583,8 +1583,8 @@ function add_device_service()
+         try {
              $service_id = add_service($device_id, $service_type, $service_desc, $service_ip, $service_param, $service_ignore);
              $code       = 201;
-             $status     = 'ok';
+-            $status     = 'ok';
 -            $message    = "Service to $hostname added successfully (service_id: $service_id)";
-+            $message    = '{"id": "$service_id"}';
++            $status     = 'Created';
++            $message    = "{\"id\": $service_id}";
          } catch (Exception $e) {
              $message = $e->getMessage();
          }
